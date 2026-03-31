@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, UserPlus, FileText, Settings, Download, Upload } from 'lucide-react';
 
-const QuickActions: React.FC = () => {
+export const QuickActions: React.FC = () => {
   const actions = [
     { icon: Plus, label: 'New Project', color: 'bg-blue-500 hover:bg-blue-600' },
     { icon: UserPlus, label: 'Add User', color: 'bg-green-500 hover:bg-green-600' },
@@ -31,5 +31,3 @@ const QuickActions: React.FC = () => {
     </div>
   );
 };
-
-export default QuickActions;

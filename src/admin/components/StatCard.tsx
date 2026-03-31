@@ -10,7 +10,7 @@ interface StatCardProps {
   color: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ 
+export const StatCard: React.FC<StatCardProps> = ({ 
   title, 
   value, 
   change, 
@@ -41,5 +41,3 @@ const StatCard: React.FC<StatCardProps> = ({
     </div>
   );
 };
-
-export default StatCard;

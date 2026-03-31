@@ -5,7 +5,7 @@ interface ChartProps {
   data: { label: string; value: number }[];
 }
 
-const Chart: React.FC<ChartProps> = ({ title, data }) => {
+export const Chart: React.FC<ChartProps> = ({ title, data }) => {
   const maxValue = Math.max(...data.map(d => d.value));
 
   return (
@@ -19,7 +19,7 @@ const Chart: React.FC<ChartProps> = ({ title, data }) => {
             </div>
             <div className="flex-1 bg-gray-200 rounded-full h-3">
               <div 
-                className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out"
+                className="bg-linear-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${(item.value / maxValue) * 100}%` }}
               ></div>
             </div>
@@ -32,5 +32,3 @@ const Chart: React.FC<ChartProps> = ({ title, data }) => {
     </div>
   );
 };
-
-export default Chart;
