@@ -1,9 +1,8 @@
-import { AdminTtitle } from '@/admin/components/AdminTtitle'
+import { AdminTitle } from '@/admin/components/AdminTitle'
 import { Link } from 'react-router'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -17,7 +16,7 @@ export const AdminProductsPage = () => {
   return (
     <>
      <div className='flex justify-between items-center'>
-         <AdminTtitle title='Productos' subtitle='Aqui puedes ver y administrar tus productos' />
+         <AdminTitle title='Productos' subtitle='Aqui puedes ver y administrar tus productos' />
 
         <Link to="/admin/products/new">
           <Button>

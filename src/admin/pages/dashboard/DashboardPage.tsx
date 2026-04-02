@@ -1,6 +1,6 @@
 
 import { ActivityFeed } from '@/admin/components/ActivityFeed';
-import { AdminTtitle } from '@/admin/components/AdminTtitle';
+import { AdminTitle } from '@/admin/components/AdminTitle';
 import { Chart } from '@/admin/components/Chart';
 import { QuickActions } from '@/admin/components/QuickActions';
 import { StatCard } from '@/admin/components/StatCard';
@@ -65,7 +65,7 @@ export const DashboardPage = () => {
   return (
     <>
       {/* Welcome Section */}
-        <AdminTtitle title='Dashboard' subtitle='Aquí puedes ver el estado de tu negocio'/>
+        <AdminTitle title='Dashboard' subtitle='Aquí puedes ver el estado de tu negocio'/>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

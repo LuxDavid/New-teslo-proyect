@@ -1,9 +1,8 @@
 import { useState } from "react";
-// import Header from "@/components/Header";
 import { ProductCard } from "./ProductCard";
 import { FilterSidebar } from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
-import { Filter, Grid, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { Filter, Grid, List} from "lucide-react";
 import type { Product } from "@/mocks/products.mock";
 import { products } from "@/mocks/products.mock";
 import { useSearchParams } from "react-router";
