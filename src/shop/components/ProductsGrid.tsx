@@ -3,15 +3,17 @@ import { ProductCard } from "./ProductCard";
 import { FilterSidebar } from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
 import { Filter, Grid, List} from "lucide-react";
-import type { Product } from "@/mocks/products.mock";
-import { products } from "@/mocks/products.mock";
 import { useSearchParams } from "react-router";
+import type { Product } from "@/interfaces/product.interface";
 
 interface Props {
-    products: Product
+    products: Product[]
 }
 
-export const ProductsGrid = ({ }: Props) => {
+export const ProductsGrid = ({products}: Props) => {
+
+    // console.log(products);
+    
 
     const [searchParams, setSearchParams] = useSearchParams();
 
