@@ -8,7 +8,7 @@ export const getProductsAction= async() : Promise<ProductsResponse>=> {
     const productsWithImageUrls= data.products.map(product => ({
         ...product,
         images: product.images.map(
-            image => `${import.meta.env.VITE_API_URL}/files/product/${image}`
+            image => `${import.meta.env.VITE_API_URL}files/product/${image}`
         )
     }))
     
