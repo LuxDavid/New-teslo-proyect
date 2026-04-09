@@ -6,10 +6,12 @@ import { useSearchParams, Link, useParams } from "react-router";
 import type { KeyboardEvent } from 'react';
 import { cn } from "@/lib/utils";
 import { CustomLogo } from "@/components/custom/CustomLogo";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export const CustomHeader = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const { logout, user } = useAuthStore();
   const { gender } = useParams();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +37,7 @@ export const CustomHeader = () => {
     <div className="container mx-auto px-4 lg:px-8">
       <div className="flex h-16 items-center justify-between">
         {/* Logo */}
-      <CustomLogo subtitle="shop"/>
+        <CustomLogo subtitle="shop" />
 
         {/* Navigation - Desktop */}
         <nav className="hidden md:flex items-center space-x-8">
@@ -81,13 +83,21 @@ export const CustomHeader = () => {
             <Search className="h-5 w-5" />
           </Button>
 
-          <Link to="/auth/login">
-            <Button variant="default" size="sm" className="ml-2">
-              Login
-            </Button>
-          </Link>
+          {
+            !user ? (
+              <Link to="/auth/login">
+                <Button variant="default" size="sm" className="ml-2">
+                  Login
+                </Button>
+              </Link>
+            ) : (
+              <Button variant="default" size="sm" className="ml-2" onClick={logout}>
+                Cerrar Sesión
+              </Button>
+            )
+          }
 
-           <Link to="/auth/login">
+          <Link to="/admin">
             <Button variant="destructive" size="sm" className="ml-2">
               Admin
             </Button>
