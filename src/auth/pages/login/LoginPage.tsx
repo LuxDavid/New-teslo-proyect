@@ -6,12 +6,13 @@ import placeholder from "@/assets/placeholder .svg";
 import { CustomLogo } from "@/components/custom/CustomLogo"
 import { Link, useNavigate } from "react-router"
 import { useState, type FormEvent } from "react";
-import { loginAction } from "@/auth/actions/login.action";
 import { toast } from "sonner";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export const LoginPage= () => {
 
     const navigate= useNavigate();
+    const {login} = useAuthStore();
     const [isPoasting, setIsPoasting] = useState(false);
 
     const handleLogin= async(event: FormEvent<HTMLFormElement>) => {
@@ -22,17 +23,14 @@ export const LoginPage= () => {
         const email= formData.get('email') as string;
         const password= formData.get('password') as string;
 
-        try {
-          const data= await loginAction(email, password);
-          localStorage.setItem('token', data.token);
-          console.log('Redireccionando al home');
-          navigate('/')
-        } catch (error) {
+          const isValid= await login(email, password);
+          if(isValid){
+            navigate('/');
+            return;
+          }
+        
           toast.error('Correo o/y contraseña no validos');
-        }
-
-        setIsPoasting(false);
-
+          setIsPoasting(false);
     }
 
 
