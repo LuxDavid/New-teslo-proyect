@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { loginAction } from '../actions/login.action';
 import { checkAuthAction } from '../actions/check-auth-action';
 
-type AuthStatus = 'authenticated' | 'not-authenticted' | 'checking';
+type AuthStatus = 'authenticated' | 'not-authenticated' | 'checking';
 
 type AuthState = {
     // Properties
@@ -12,6 +12,7 @@ type AuthState = {
     authStatus: AuthStatus;
 
     //Getters
+    isAdmin:() => boolean;
 
     //Actions
     login: (email: string, password: string) => Promise<boolean>;
@@ -19,12 +20,18 @@ type AuthState = {
     checkAuthStatus: () => Promise<boolean>;
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
     //Implementacion del Store
 
     user: null,
     token: null,
     authStatus: 'checking',
+
+    //Getters
+    isAdmin:() => {
+        const roles= get().user?.roles || [];
+        return roles.includes('admin');
+    },
 
     //Actions
     login: async (email: string, password: string) => {
@@ -40,7 +47,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
         } catch (error) {
             localStorage.removeItem('token');
-            set({ user: null, token: null, authStatus: 'not-authenticted' });
+            set({ user: null, token: null, authStatus: 'not-authenticated' });
             return false
         }
     },
@@ -48,7 +55,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
     logout: () => {
         localStorage.removeItem('token');
-        set({ user: null, token: null, authStatus: 'not-authenticted' });
+        set({ user: null, token: null, authStatus: 'not-authenticated' });
     },
 
     checkAuthStatus: async () => {
@@ -67,7 +74,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
             set({
                 user: undefined,
                 token: undefined,
-                authStatus: 'not-authenticted'
+                authStatus: 'not-authenticated'
             });
 
             return false;
