@@ -4,14 +4,44 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import placeholder from "@/assets/placeholder .svg";
 import { CustomLogo } from "@/components/custom/CustomLogo"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export const RegisterPage= () => {
+
+    const navigate= useNavigate();
+    const {register} = useAuthStore();
+    const [isPoasting, setIsPoasting] = useState(false);
+
+    const handleRegister= async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+       setIsPoasting(true);
+
+        const formData= new FormData(event.target as HTMLFormElement);
+        const email= formData.get('email') as string;
+        const password= formData.get('password') as string;
+        const fullName= formData.get('fullName') as string;
+
+        console.log(event.target);
+        
+
+         const isValid= await register(email, password, fullName);
+          if(isValid){
+            navigate('/');
+            return;
+          }
+
+          toast.error('Usuario ya existente');
+          setIsPoasting(false);
+    }
+
   return (
     <div className={"flex flex-col gap-6"} >
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleRegister}>
 
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
@@ -23,27 +53,27 @@ export const RegisterPage= () => {
 
               <div className="grid gap-2">
                 <Label htmlFor="fullName">Nombre completo</Label>
-                <Input id="fullName" type="text" placeholder="Nombre completo" required />
+                <Input id="fullName" type="text" placeholder="Nombre completo" required name="fullName" />
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="email">Correo</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+                <Input id="email" type="email" placeholder="m@example.com" required name="email"/>
               </div>
 
               <div className="grid gap-2">
 
                 <div className="flex items-center">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <Label htmlFor="password" >Contraseña</Label>
                   <Link to="#" className="ml-auto text-sm underline-offset-2 hover:underline">
                     ¿Olvidaste tu contraseña?
                   </Link>
                 </div>
 
-                <Input id="password" type="password" required placeholder="contraseña" />
+                <Input id="password" type="password" required placeholder="contraseña" name="password"/>
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isPoasting}>
                 Crear cuenta
               </Button>
 
