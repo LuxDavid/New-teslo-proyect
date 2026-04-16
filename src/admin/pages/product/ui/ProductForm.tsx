@@ -4,6 +4,7 @@ import type { Product } from '@/interfaces/product.interface';
 import { X, SaveAll, Tag, Plus, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import {useForm} from "react-hook-form";
 
 interface Props {
     title: string;
@@ -11,13 +12,16 @@ interface Props {
     product: Product;
 }
 
-const availableSizes = ['XS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXL'];
+const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
 export const ProductForm = ({ title, subTitle, product }: Props) => {
-    console.log({ product });
 
     const [newTag, setNewTag] = useState('');
+
     const [dragActive, setDragActive] = useState(false);
+    const {register} = useForm({
+        defaultValues: product,
+    })
 
     const addTag = () => {
         if (newTag.trim() && !product.tags.includes(newTag.trim())) {
@@ -112,6 +116,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                         type="text"
                                         // value={product.title}
                                         // onChange={(e) => handleInputChange('title', e.target.value)}
+                                        {...register('title')}
                                         className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                         placeholder="Título del producto"
                                     />
@@ -124,7 +129,8 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                         </label>
                                         <input
                                             type="number"
-                                            value={product.price}
+                                            // value={product.price}
+                                            {...register('price')}
                                             // onChange={(e) =>
                                             //   handleInputChange('price', parseFloat(e.target.value))
                                             // }
@@ -143,6 +149,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                             // onChange={(e) =>
                                             //   handleInputChange('stock', parseInt(e.target.value))
                                             // }
+                                            {...register('stock')}
                                             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                             placeholder="Stock del producto"
                                         />
@@ -157,6 +164,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                         type="text"
                                         // value={product.slug}
                                         // onChange={(e) => handleInputChange('slug', e.target.value)}
+                                        {...register('slug')}
                                         className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                         placeholder="Slug del producto"
                                     />
@@ -171,6 +179,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                         // onChange={(e) =>
                                         //   handleInputChange('gender', e.target.value)
                                         // }
+                                        {...register('gender')}
                                         className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                     >
                                         <option value="men">Hombre</option>
@@ -189,6 +198,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                         // onChange={(e) =>
                                         //   handleInputChange('description', e.target.value)
                                         // }
+                                        {...register('description')}
                                         rows={5}
                                         className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                                         placeholder="Descripción del producto"
