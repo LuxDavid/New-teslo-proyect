@@ -62,7 +62,7 @@ export const AdminProductsPage = () => {
             <TableCell>{product.stock}</TableCell>
             <TableCell>{product.sizes}</TableCell>
             <TableCell className="text-right">
-              <Link to="/admin/products/t-shit-teslo">
+              <Link to={`/admin/products/${product.id}`}>
                   <PencilIcon className='w-4 h-4 text-blue-500'/>
               </Link>
             </TableCell>
