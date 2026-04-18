@@ -1,6 +1,6 @@
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { Button } from '@/components/ui/button';
-import type { Product } from '@/interfaces/product.interface';
+import type { Product, Size } from '@/interfaces/product.interface';
 import { X, SaveAll, Tag, Plus, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -13,24 +13,26 @@ interface Props {
     product: Product;
 }
 
-const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
 export const ProductForm = ({ title, subTitle, product }: Props) => {
 
     const [newTag, setNewTag] = useState('');
 
     const [dragActive, setDragActive] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors }, getValues, setValue, watch } = useForm({
         defaultValues: product,
-    })
+    });
+
+    const selectedSizes = watch('sizes');
 
     const addTag = () => {
-        if (newTag.trim() && !product.tags.includes(newTag.trim())) {
-            // setProduct((prev) => ({
-            //   ...prev,
-            //   tags: [...prev.tags, newTag.trim()],
-            // }));
-        }
+        // if (newTag.trim() && !product.tags.includes(newTag.trim())) {
+        //     // setProduct((prev) => ({
+        //     //   ...prev,
+        //     //   tags: [...prev.tags, newTag.trim()],
+        //     // }));
+        // }
     };
 
     const removeTag = (tagToRemove: string) => {
@@ -40,13 +42,10 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
         // }));
     };
 
-    const addSize = (size: string) => {
-        // if (!product.sizes.includes(size)) {
-        //   setProduct((prev) => ({
-        //     ...prev,
-        //     sizes: [...prev.sizes, size],
-        //   }));
-        // }
+    const addSize = (size: Size) => {
+        const sizeSet = new Set(getValues('sizes'));
+        sizeSet.add(size);
+        setValue('sizes', Array.from(sizeSet));
     };
 
     const removeSize = (sizeToRemove: string) => {
@@ -80,13 +79,12 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
     };
 
     // TODO remover en un futuro
-    const onSubmit = (productLike: Product) => {
+    const onsubmit = (productLike: Product) => {
         console.log('onSubmit', productLike);
-
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onsubmit)}>
             <div className="flex justify-between items-center">
                 <AdminTitle title={title} subtitle={subTitle} />
                 <div className="flex justify-end mb-10 gap-4">
@@ -115,6 +113,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                             </h2>
 
                             <div className="space-y-6">
+                                {/*----------------------Title formulario----------------------------------*/}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Título del producto
@@ -131,6 +130,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                     {errors.title && (<p className='text-red-500 text-sm'>El titulo es requerido</p>)}
                                 </div>
 
+                                {/*----------------------Price formulario----------------------------------*/}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -148,13 +148,14 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                         {errors.price && (<p className='text-red-500 text-sm'>El Precio debe ser mayor a 0</p>)}
                                     </div>
 
+                                {/*----------------------Stock formulario----------------------------------*/}
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">
                                             Stock del producto
                                         </label>
                                         <input
                                             type="number"
-                                          {...register('stock', { min: 1, required: true })}
+                                            {...register('stock', { min: 1, required: true })}
                                             className={cn(
                                                 "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
                                                 { 'border-red-500': errors.stock }
@@ -165,13 +166,14 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                     </div>
                                 </div>
 
+                                {/*----------------------Slug formulario----------------------------------*/}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Slug del producto
                                     </label>
                                     <input
                                         type="text"
-                                        {...register('slug', {required:true, validate:(value) => !/\s/.test(value) || 'El slug no puede contener espacios vacios'})}
+                                        {...register('slug', { required: true, validate: (value) => !/\s/.test(value) || 'El slug no puede contener espacios vacios' })}
                                         className={cn(
                                             "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
                                             { 'border-red-500': errors.slug }
@@ -181,6 +183,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                     {errors.slug && (<p className='text-red-500 text-sm'>{errors.slug.message || 'El titulo es requerido'}</p>)}
                                 </div>
 
+                                {/*----------------------Genero formulario----------------------------------*/}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Género del producto
@@ -196,12 +199,13 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                     </select>
                                 </div>
 
+                                {/*----------------------Descripcion formulario----------------------------------*/}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Descripción del producto
                                     </label>
                                     <textarea
-                                        {...register('description', {required: true})}
+                                        {...register('description', { required: true })}
                                         rows={5}
                                         className={cn(
                                             "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
@@ -214,7 +218,7 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                             </div>
                         </div>
 
-                        {/* Sizes */}
+                       {/*----------------------Sizes formulario----------------------------------*/}
                         <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
                             <h2 className="text-xl font-semibold text-slate-800 mb-6">
                                 Tallas disponibles
@@ -222,10 +226,16 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
 
                             <div className="space-y-4">
                                 <div className="flex flex-wrap gap-2">
-                                    {product.sizes.map((size) => (
+
+                                {/*----------------------available sizes formulario----------------------------------*/}
+                                    {availableSizes.map((size) => (
                                         <span
                                             key={size}
-                                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                                            className={
+                                                cn("inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200",
+                                                    {hidden: !selectedSizes. includes(size)}
+                                                )
+                                            }
                                         >
                                             {size}
                                             <button
@@ -242,16 +252,17 @@ export const ProductForm = ({ title, subTitle, product }: Props) => {
                                     <span className="text-sm text-slate-600 mr-2">
                                         Añadir tallas:
                                     </span>
+                                    {/*----------------------Add sizes formulario----------------------------------*/}
                                     {availableSizes.map((size) => (
                                         <button
+                                            type='button'
                                             key={size}
-                                        // onClick={() => addSize(size)}
-                                        // disabled={product.sizes.includes(size)}
-                                        // className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
-                                        //   product.sizes.includes(size)
-                                        //     ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                        //     : 'bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer'
-                                        // }`}
+                                            onClick={() => addSize(size)}
+                                            disabled={getValues('sizes').includes(size)}
+                                            className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${selectedSizes.includes(size)
+                                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer'
+                                                }`}
                                         >
                                             {size}
                                         </button>
