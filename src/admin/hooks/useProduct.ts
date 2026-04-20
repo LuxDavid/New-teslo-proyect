@@ -1,9 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getProductAction } from "../actions/get-product-by-id.action";
 import type { Product } from "@/interfaces/product.interface";
 import { createUpdateProductAction } from "../actions/create-update-products";
 
 export const useProduct= (id: string) => {
+
+    const queryClient= useQueryClient();
+
     const query= useQuery({
         queryKey: ['product', {id}],
         queryFn: () => getProductAction(id),
@@ -16,7 +19,12 @@ export const useProduct= (id: string) => {
     const mutation= useMutation({
         mutationFn: createUpdateProductAction,
         onSuccess: (product: Product) => {
-            //TODO
+            //Invalidar cache
+            queryClient.invalidateQueries({queryKey:['products']});
+            queryClient.invalidateQueries({queryKey:['product', {id: product.id}]});
+
+            //Actualizar queryData
+            queryClient.setQueryData(['products', {id: product.id}], product);
         }
     });
 
