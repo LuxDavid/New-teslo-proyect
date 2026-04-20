@@ -45,7 +45,7 @@ export const AdminProductPage = () => {
     return <Navigate to='/admin/products'/>
   }
 
-  return <ProductForm title={title} subTitle={subtitle} product={product} onSubmit={handleSubmitForm}/>
+  return <ProductForm title={title} subTitle={subtitle} product={product} onSubmit={handleSubmitForm} isPending={mutation.isPending}/>
 
   
 };
