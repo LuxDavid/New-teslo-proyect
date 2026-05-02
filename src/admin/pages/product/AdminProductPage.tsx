@@ -17,7 +17,7 @@ export const AdminProductPage = () => {
 
   const navigate= useNavigate();
 
-  const  handleSubmitForm = async(productLike: Partial<Product>) => {
+  const  handleSubmitForm = async(productLike: Partial<Product> & {files?:File[]}) => {
 
     await mutation.mutateAsync(productLike, {
       onSuccess: (data) => {

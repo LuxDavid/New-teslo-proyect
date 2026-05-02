@@ -2,7 +2,7 @@ import { AdminTitle } from '@/admin/components/AdminTitle';
 import { Button } from '@/components/ui/button';
 import type { Product, Size } from '@/interfaces/product.interface';
 import { X, SaveAll, Tag, Plus, Upload } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { useForm } from "react-hook-form";
 import { cn } from '@/lib/utils';
@@ -14,8 +14,11 @@ interface Props {
     isPending: boolean;
 
     //Methods
-    onSubmit: (productLike: Partial<Product>) => Promise<void>;
-    
+    onSubmit: (productLike: Partial<Product> & {files?:File[]}  ) => Promise<void>;
+}
+
+interface FormInputs extends Product {
+    files?: File[];
 }
 
 const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -23,20 +26,25 @@ const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 export const ProductForm = ({ title, subTitle, product, onSubmit, isPending }: Props) => {
 
     const [dragActive, setDragActive] = useState(false);
-    const { register, handleSubmit, formState: { errors }, getValues, setValue, watch } = useForm({
+    const { register, handleSubmit, formState: { errors }, getValues, setValue, watch } = useForm<FormInputs>({
         defaultValues: product,
     });
 
     const labelInputRef = useRef<HTMLInputElement>(null);
+    const [files, setFiles] = useState<File[]>([]);
+
+    useEffect(() => {
+        setFiles([]);
+    }, [product]);
 
     const selectedSizes = watch('sizes');
     const selectedTags = watch('tags');
-    const currentStock= watch('stock');
+    const currentStock = watch('stock');
 
     const addTag = () => {
         const newTag = labelInputRef.current!.value;
 
-        if(newTag === '') return;
+        if (newTag === '') return;
 
         const newTagSet = new Set(getValues('tags'));
         newTagSet.add(newTag);
@@ -76,12 +84,21 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPending }: P
         e.stopPropagation();
         setDragActive(false);
         const files = e.dataTransfer.files;
-        console.log(files);
+        if (!files) return;
+
+        setFiles((prev) => [...prev, ...Array.from(files)]);
+
+        const currentFiles= getValues('files') || [];
+        setValue('files', [...currentFiles, ...Array.from(files)]);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        console.log(files);
+        if (!files) return;
+
+        setFiles((prev) => [...prev, ...Array.from(files)]);
+        const currentFiles= getValues('files') || [];
+        setValue('files', [...currentFiles, ...Array.from(files)]);
     };
 
     return (
@@ -363,7 +380,7 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPending }: P
                                 </div>
                             </div>
 
-                            {/*--------------------------Current Status---------------------------------*/}
+                            {/*--------------------------Current images---------------------------------*/}
                             <div className="mt-6 space-y-3">
                                 <h3 className="text-sm font-medium text-slate-700">
                                     Imágenes actuales
@@ -388,9 +405,32 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPending }: P
                                     ))}
                                 </div>
                             </div>
+
+                            {/*--------------------------Imagenes por cargar---------------------------------*/}
+                            <div className="mt-6 space-y-3">
+                                <h3 className="text-sm font-medium text-slate-700">
+                                    Imágenes por cargar
+                                </h3>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {
+                                        files.map((file, index) => (
+                                            <div key={index} className="relative group">
+                                                <div className="aspect-square bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
+                                                    <img
+                                                        src={URL.createObjectURL(file)}
+                                                        alt="Product"
+                                                        key={index}
+                                                        className="w-full h-full object-cover rounded-lg"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
                         </div>
 
-                      {/*--------------------------Product stattus---------------------------------*/}
+                        {/*--------------------------Product stattus---------------------------------*/}
                         <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
                             <h2 className="text-xl font-semibold text-slate-800 mb-6">
                                 Estado del producto
